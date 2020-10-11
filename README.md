@@ -1,4 +1,4 @@
-# near-near-map-dynamodb-stream
+# near-near-map-function-dynamodb-stream
 
 ## ライブラリのインストール
 

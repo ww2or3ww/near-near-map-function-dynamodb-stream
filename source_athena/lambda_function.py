@@ -13,6 +13,9 @@ logger.setLevel(logging.INFO)
 
 S3_BUCKET_NAME          = ""    if("S3_BUCKET_NAME" not in os.environ)              else os.environ["S3_BUCKET_NAME"]
 S3_PREFIX_OUT           = ""    if("S3_PREFIX_OUT" not in os.environ)               else os.environ["S3_PREFIX_OUT"]
+ATHENA_DB_NAME          = ""    if("ATHENA_DB_NAME" not in os.environ)              else os.environ["ATHENA_DB_NAME"]
+ATHENA_TABLE_NAME       = ""    if("ATHENA_TABLE_NAME" not in os.environ)           else os.environ["ATHENA_TABLE_NAME"]
+ATHENA_OUTPUT_LOCATION  = ""    if("ATHENA_OUTPUT_LOCATION" not in os.environ)      else os.environ["ATHENA_OUTPUT_LOCATION"]
 
 S3_RESOURCE             = boto3.resource('s3')
 ATHENA                  = boto3.client("athena")
@@ -41,7 +44,6 @@ def upload(record, needAddPartition):
 
     except Exception as e:
         logger.exception(e)
-        
 
 @retry(tries=3, delay=1)
 def uploadData(data, needAddPartition):
@@ -55,17 +57,16 @@ def uploadData(data, needAddPartition):
 
     if needAddPartition:
         # パーティション設定
-        table_name = "data"
         location = "s3://" + S3_BUCKET_NAME + "/" + p_h3_9_key + "/"
-        sql = "ALTER TABLE {0} ADD IF NOT EXISTS PARTITION (p_type = '{1}', p_h3_9 = '{2}') location '{3}';".format(table_name, data["type"], key_list[0], location)
+        sql = "ALTER TABLE {0} ADD IF NOT EXISTS PARTITION (p_type = '{1}', p_h3_9 = '{2}') location '{3}';".format(ATHENA_TABLE_NAME, data["type"], key_list[0], location)
         logger.info(sql)
         ATHENA.start_query_execution(
             QueryString=sql,
             QueryExecutionContext={
-                "Database": "near-near-map-h3"
+                "Database": ATHENA_DB_NAME
             },
             ResultConfiguration={
-                "OutputLocation": "s3://near-near-map-p/athena"
+                "OutputLocation": ATHENA_OUTPUT_LOCATION
             }
         )
 

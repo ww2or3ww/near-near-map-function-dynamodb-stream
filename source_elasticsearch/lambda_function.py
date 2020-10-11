@@ -90,37 +90,37 @@ def remove(record, es):
 def getDataFronRecord(record, type):
     try:
         data = {}
-        data["type"] =      record["dynamodb"][type]["type"]["S"]
-        data["guid"] =      record["dynamodb"][type]["guid"]["S"]
-        data["title"] =     record["dynamodb"][type]["title"]["S"]
-        data["tel"] =       record["dynamodb"][type]["tel"]["S"]
-        data["address"] =   record["dynamodb"][type]["address"]["S"]
-        data["homepage"] =  record["dynamodb"][type]["homepage"]["S"]
-        data["facebook"] =    record["dynamodb"][type]["facebook"]["S"]
-        data["instagram"] =  record["dynamodb"][type]["instagram"]["S"]
-        data["twitter"] =   record["dynamodb"][type]["twitter"]["S"]
-        data["media1"] =    record["dynamodb"][type]["media1"]["S"]
-        data["media2"] =    record["dynamodb"][type]["media2"]["S"]
-        data["media3"] =    record["dynamodb"][type]["media3"]["S"]
-        data["media4"] =    record["dynamodb"][type]["media4"]["S"]
-        data["media5"] =    record["dynamodb"][type]["media5"]["S"]
+        data["type"] =                  record["dynamodb"][type]["type"]["S"]
+        data["guid"] =                  record["dynamodb"][type]["guid"]["S"]
+        data["title"] =                 record["dynamodb"][type]["title"]["S"]
+        data["tel"] =                   record["dynamodb"][type]["tel"]["S"]
+        data["address"] =               record["dynamodb"][type]["address"]["S"]
+        data["homepage"] =              record["dynamodb"][type]["homepage"]["S"]
+        data["facebook"] =              record["dynamodb"][type]["facebook"]["S"]
+        data["instagram"] =             record["dynamodb"][type]["instagram"]["S"]
+        data["twitter"] =               record["dynamodb"][type]["twitter"]["S"]
+        data["media1"] =                record["dynamodb"][type]["media1"]["S"]
+        data["media2"] =                record["dynamodb"][type]["media2"]["S"]
+        data["media3"] =                record["dynamodb"][type]["media3"]["S"]
+        data["media4"] =                record["dynamodb"][type]["media4"]["S"]
+        data["media5"] =                record["dynamodb"][type]["media5"]["S"]
+        data["latlon"] =                record["dynamodb"][type]["latlon"]["S"]
+        data["has_xframe_options"] =    record["dynamodb"][type]["has_xframe_options"]["S"]
+        data["locoguide_id"] =          record["dynamodb"][type]["locoguide_id"]["S"]
+
         if "image" in record["dynamodb"][type]:
             data["image"] =     record["dynamodb"][type]["image"]["S"]
         else:
             data["image"] = ""
-        data["has_xframe_options"] = record["dynamodb"][type]["has_xframe_options"]["S"]
-        data["locoguide_id"] = record["dynamodb"][type]["locoguide_id"]["S"]
-        
-        # latlonList = record["dynamodb"][type]["latlon"]["S"].split(",")
-        # lat = latlonList[0]
-        # lon = latlonList[1]
-        # data["latlon"] = {"lat" : float(lat), "lon" : float(lon)}
-        data["latlon"] = record["dynamodb"][type]["latlon"]["S"]
-        
+
         if "star" in record["dynamodb"][type]:
-            data["star"] = record["dynamodb"][type]["star"]["N"]
-        
-        
+            if "N" in record["dynamodb"][type]["star"]:
+                data["star"] = record["dynamodb"][type]["star"]["N"]
+            elif "S" in record["dynamodb"][type]["star"]:
+                data["star"] = int(record["dynamodb"][type]["star"]["S"])
+        if "star" not in data:
+            data["star"] = 0
+
         return data
     except Exception as e:
         logger.exception(e)

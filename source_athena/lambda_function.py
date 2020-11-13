@@ -120,7 +120,13 @@ def getDataFronRecord(record, type):
         if "star" not in data:
             data["star"] = 0
 
+        if "subtype" in record["dynamodb"][type]:
+            data["subtype"] =     record["dynamodb"][type]["subtype"]["N"]
+        else:
+            data["subtype"] = ""
+
         return data
+        
     except Exception as e:
         logger.exception(e)
         return None
